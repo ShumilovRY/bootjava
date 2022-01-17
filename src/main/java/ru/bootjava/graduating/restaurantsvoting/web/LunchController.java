@@ -17,7 +17,7 @@ public class LunchController {
 
     private final LunchRepository lunchRepository;
 
-    @DeleteMapping(value = "/{id}")//todo: fix
+    @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable int id) {
         log.debug("before, lunches count : {}", lunchRepository.count());
         lunchRepository.deleteById(id);
