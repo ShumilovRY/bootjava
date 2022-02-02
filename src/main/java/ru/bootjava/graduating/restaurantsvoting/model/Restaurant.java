@@ -1,29 +1,47 @@
 package ru.bootjava.graduating.restaurantsvoting.model;
 
-import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.bootjava.graduating.restaurantsvoting.util.validation.NoHtml;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "restaurants")
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@ToString(callSuper = true)
+@Table(name = "restaurant", uniqueConstraints = {@UniqueConstraint(columnNames = "title",
+        name = "restaurant_unique_title_idx")})
 public class Restaurant extends BaseEntity {
 
-    @Column(name = "name", nullable = false, unique = true)
-    @Size(max = 128)
-    @NotEmpty
-    private String name;
+    @Column(name = "title", nullable = false)
+    @Size(min = 2, max = 100)
+    @NotBlank
+    @NoHtml
+    private String title;
 
-    @OneToOne
-    @JoinColumn(name = "lunch_id", referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Lunch lunch;
+    public Restaurant(Restaurant restaurant) {
+        this(restaurant.getId(), restaurant.getTitle());
+    }
+
+    public Restaurant(Integer id, String title) {
+        super(id);
+        this.title = title;
+    }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                '}';
+    }
+
 }

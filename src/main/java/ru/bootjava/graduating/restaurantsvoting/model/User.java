@@ -1,15 +1,20 @@
 package ru.bootjava.graduating.restaurantsvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
-import org.springframework.util.StringUtils;
-import ru.bootjava.graduating.restaurantsvoting.util.JsonDeserializers;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.util.CollectionUtils;
+import ru.bootjava.graduating.restaurantsvoting.HasIdAndEmail;
+import ru.bootjava.graduating.restaurantsvoting.util.validation.NoHtml;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumSet;
 import java.util.Set;
 
 @Entity
@@ -17,37 +22,62 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@ToString(callSuper = true, exclude = {"password"})
-public class User extends BaseEntity {
+@ToString(callSuper = true)
+public class User extends NamedEntity implements HasIdAndEmail, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "email", nullable = false, unique = true)
     @Email
-    @Size(max = 128)
-    @NotEmpty
+    @NotBlank
+    @Size(max = 100)
+    @NoHtml   // https://stackoverflow.com/questions/17480809
     private String email;
 
-    @Column(name = "first_name")
-    @Size(max = 128)
-    private String firstName;
-
-    @Column(name = "last_name")
-    @Size(max = 128)
-    private String lastName;
-
-    @Column(name = "password")
-    @Size(max = 256)
+    @ToString.Exclude
+    @Column(name = "password", nullable = false)
+    @NotBlank
+    @Size(min = 5, max = 100)
+    // https://stackoverflow.com/a/12505165/548473
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JsonDeserialize(using = JsonDeserializers.PasswordDeserializer.class)
     private String password;
 
+    @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
+    private boolean enabled = true;
+
+    @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()", updatable = false)
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Date registered = new Date();
+
     @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_roles"))
     @Column(name = "role")
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "user_roles_unique")})
     @ElementCollection(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id") //https://stackoverflow.com/a/62848296/548473
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
 
-    public void setEmail(String email) {
-        this.email = StringUtils.hasText(email) ? email.toLowerCase() : null;
+    public User(User u) {
+        this(u.id, u.name, u.email, u.password, u.enabled, u.registered, u.roles);
+    }
+
+    public User(Integer id, String name, String email, String password, Role role, Role... roles) {
+        this(id, name, email, password, true, new Date(), EnumSet.of(role, roles));
+    }
+
+    public User(Integer id, String name, String email, String password, boolean enabled, Date registered, Collection<Role> roles) {
+        super(id, name);
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.registered = registered;
+        setRoles(roles);
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
     }
 }

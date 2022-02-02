@@ -1,20 +1,18 @@
-package ru.bootjava.graduating.restaurantsvoting;
+package ru.bootjava.graduating.restaurantsvoting.web;
 
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
 import ru.bootjava.graduating.restaurantsvoting.model.User;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
 
 @Getter
 @ToString(of = "user")
-public class AuthUser extends org.springframework.security.core.userdetails.User{
+public class AuthUser extends org.springframework.security.core.userdetails.User {
 
     private final User user;
 
-    public AuthUser(@NotNull User user) {
+    public AuthUser(@NonNull User user) {
         super(user.getEmail(), user.getPassword(), user.getRoles());
         this.user = user;
     }

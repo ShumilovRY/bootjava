@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,14 +13,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.bootjava.graduating.restaurantsvoting.AuthUser;
 import ru.bootjava.graduating.restaurantsvoting.model.Role;
 import ru.bootjava.graduating.restaurantsvoting.model.User;
 import ru.bootjava.graduating.restaurantsvoting.repository.UserRepository;
+import ru.bootjava.graduating.restaurantsvoting.web.AuthUser;
 
 import java.util.Optional;
+
+import static ru.bootjava.graduating.restaurantsvoting.util.UserUtil.PASSWORD_ENCODER;
 
 @Configuration
 @EnableWebSecurity
@@ -27,17 +28,21 @@ import java.util.Optional;
 @AllArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UserRepository userRepository;
 
     @Bean
+    @Override
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return super.userDetailsServiceBean();
+    }
+
+    @Override
     public UserDetailsService userDetailsService() {
         return email -> {
-            log.debug("Authentication '{}'", email);
-            Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
+            log.debug("Authenticating '{}'", email);
+            Optional<User> optionalUser = userRepository.getByEmail(email);
             return new AuthUser(optionalUser.orElseThrow(
-                    () -> new UsernameNotFoundException("User '" + email + "' was not found")
-            ));
+                    () -> new UsernameNotFoundException("User '" + email + "' was not found")));
         };
     }
 
@@ -50,11 +55,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/api/account/register").anonymous()
-                .antMatchers("/api/account").hasRole(Role.USER.name())
-                .antMatchers("/api/restaurants").hasRole(Role.USER.name())
-                .antMatchers("/api/lunches").hasRole(Role.USER.name())
-                .antMatchers("/api/**").hasRole(Role.ADMIN.name())
+                .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
+                .antMatchers(HttpMethod.POST, "/api/profile").anonymous()
+                .antMatchers("/api/**").authenticated()
                 .and().httpBasic()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable();

@@ -1,33 +1,42 @@
-INSERT INTO USERS (EMAIL, FIRST_NAME, LAST_NAME, PASSWORD)
-VALUES ('user@gmail.com', 'User_First', 'User_Last', '{noop}password'),
-       ('admin@mail.ru', 'Admin_first', 'Admin_Last', '{noop}admin');
+DELETE
+FROM user_roles;
+DELETE
+FROM vote;
+DELETE
+FROM users;
+DELETE
+FROM restaurant;
+DELETE
+FROM item;
 
-INSERT INTO USER_ROLE (ROLE, USER_ID)
+INSERT INTO users (name, email, password)
+VALUES ('User', 'user@yandex.ru', '{noop}password'),
+       ('Admin', 'admin@gmail.com', '{noop}admin');
+
+INSERT INTO user_roles (role, user_id)
 VALUES ('USER', 1),
        ('ADMIN', 2),
        ('USER', 2);
-INSERT INTO LUNCHES (DATE)
-VALUES ('2021-05-16'),
-       ('2021-05-16'),
-       ('2021-05-16');
 
-INSERT INTO RESTAURANTS (NAME, LUNCH_ID) VALUES ('Mak', 1);
-INSERT INTO RESTAURANTS (NAME, LUNCH_ID) VALUES ('BK', 2);
-INSERT INTO RESTAURANTS (NAME, LUNCH_ID) VALUES ('KFC', 3);
+INSERT INTO restaurant (title)
+VALUES ('Mak'),
+       ('BK'),
+       ('KFC');
 
-INSERT INTO ITEMS(DISH_NAME, PRICE, LUNCH_ID)
-VALUES ('Prime Filet Mignon', 44, 1),
-       ('Chateaubriand Au Poivre', 125, 1),
-       ('Whole Branzino', 70, 1),
-       ('Tuna Romesco', 36, 1),
-       ('Arancini Lobster', 18, 1),
-       ('Ice-Cold Shellfish', 149, 2),
-       ('Half Maine Lobster', 49, 2),
-       ('Classic Caesar', 16, 2),
-       ('Scottish Salmon', 38, 2),
-       ('Miso-Glased Sea Bass', 46, 2),
-       ('Contadina', 15, 3),
-       ('Fettuccine Al Gusto', 17, 3),
-       ('Pollo Caprese', 20, 3),
-       ('Lodi', 17, 3),
-       ('Cavolo E Ricota', 17, 3);
+INSERT INTO vote (local_date, local_time, restaurant_id, user_id)
+VALUES (CURRENT_DATE, '06:01', 1, 1),
+       (CURRENT_DATE, '08:00', 2, 2),
+       (CURRENT_DATE, '08:20', 3, 1),
+       (CURRENT_DATE, '10:59', 2, 2),
+       (CURRENT_DATE, '08:08', 3, 1);
+
+INSERT INTO item (local_date, price, title, restaurant_id)
+VALUES (CURRENT_DATE, 111, 'Mak Burger1', 1),
+       (CURRENT_DATE, 112, 'Mak Burger2', 1),
+       (CURRENT_DATE, 113, 'Mak Burger3', 1),
+       (CURRENT_DATE, 211, 'BK Burger1', 2),
+       (CURRENT_DATE, 212, 'BK Burger2', 2),
+       (CURRENT_DATE, 213, 'BK Burger3', 2),
+       (CURRENT_DATE, 311, 'KFC Burger1', 3),
+       (CURRENT_DATE, 312, 'KFC Burger2', 3),
+       (CURRENT_DATE, 313, 'KFC Burger3', 3);
