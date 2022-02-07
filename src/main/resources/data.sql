@@ -24,10 +24,10 @@ VALUES ('Mak'),
        ('KFC');
 
 INSERT INTO vote (local_date, local_time, restaurant_id, user_id)
-VALUES (CURRENT_DATE, '06:01', 1, 1),
-       (CURRENT_DATE, '08:00', 2, 2),
-       (CURRENT_DATE, '08:20', 3, 1),
-       (CURRENT_DATE, '10:59', 2, 2),
+VALUES ('2022-02-05', '06:01', 1, 1),
+       ('2022-02-05', '08:00', 2, 2),
+       ('2022-02-06', '08:20', 3, 1),
+       ('2022-02-06', '10:59', 2, 2),
        (CURRENT_DATE, '08:08', 3, 1);
 
 INSERT INTO item (local_date, price, title, restaurant_id)

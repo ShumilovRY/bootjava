@@ -7,6 +7,7 @@ import ru.bootjava.graduating.restaurantsvoting.to.RestaurantTo;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface RestaurantRepository extends BaseRepository<Restaurant> {

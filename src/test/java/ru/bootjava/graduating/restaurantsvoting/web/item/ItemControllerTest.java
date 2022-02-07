@@ -7,8 +7,12 @@ import ru.bootjava.graduating.restaurantsvoting.web.restaurant.RestaurantTestDat
 import ru.bootjava.graduating.restaurantsvoting.web.AbstractControllerTest;
 import ru.bootjava.graduating.restaurantsvoting.web.restaurant.RestaurantController;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.bootjava.graduating.restaurantsvoting.web.TestUtil.userHttpBasic;
 import static ru.bootjava.graduating.restaurantsvoting.web.item.ItemTestData.*;
+import static ru.bootjava.graduating.restaurantsvoting.web.user.UserTestData.user;
 
 public class ItemControllerTest extends AbstractControllerTest {
     private static final String RESTAURANTS_REST_URL = RestaurantController.RESTAURANTS_REST_URL + '/';

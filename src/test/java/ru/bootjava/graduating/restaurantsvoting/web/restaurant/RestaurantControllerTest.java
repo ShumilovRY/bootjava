@@ -6,8 +6,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.bootjava.graduating.restaurantsvoting.web.AbstractControllerTest;
 import ru.bootjava.graduating.restaurantsvoting.to.RestaurantTo;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.bootjava.graduating.restaurantsvoting.web.TestUtil.userHttpBasic;
+import static ru.bootjava.graduating.restaurantsvoting.web.user.UserTestData.user;
 
 class RestaurantControllerTest extends AbstractControllerTest {
 

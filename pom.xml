@@ -11,9 +11,9 @@
     <groupId>ru.javaops</groupId>
     <artifactId>bootjava</artifactId>
     <version>1.0</version>
-    <name>BootJava</name>
-    <description>Spring Boot 2.x HATEOAS application (BootJava)</description>
-    <url>https://javaops.ru/view/bootjava</url>
+    <name>Restaurant Voting Application</name>
+    <description>This system voting is for deciding where to dine</description>
+    <url>https://github.com/shumilovry</url>
 
     <properties>
         <java.version>17</java.version>
